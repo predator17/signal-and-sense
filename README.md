@@ -1,5 +1,7 @@
 # Signal & Sense
 
+![Signal & Sense desktop preview showing bilingual stock-filter explanations and an illustrative chart](docs/screenshot.png)
+
 A beginner-friendly, bilingual English and Cantonese field guide to **142 stock filters**. It includes interactive visualizations, rendered KaTeX formulas, practical scenarios, best practices, common misreads, saved filters, learning progress, and screening playbooks.
 
 The interface uses a dark-and-gold theme and is built with React, TypeScript, Vite, Recharts, KaTeX, and Lucide icons. All chart values are illustrative; no live-market API or backend is required.
