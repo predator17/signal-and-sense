@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Activity, ArrowLeft, ArrowRight, BellRing, Bookmark, BookmarkCheck, BookOpen,
   BriefcaseBusiness, Building2, Calculator, ChartCandlestick, Check, ChevronRight,
@@ -30,26 +30,19 @@ type ExplorerProps = {
 }
 
 export function Explorer({ selectedId, onSelect, saved, onToggleSaved, learned, onToggleLearned }: ExplorerProps) {
-  const [activeCategory, setActiveCategory] = useState<CategoryId>('fundamental')
   const [query, setQuery] = useState('')
   const [savedOnly, setSavedOnly] = useState(false)
   const [mode, setMode] = useState<LanguageMode>('both')
   const itemListRef = useRef<HTMLDivElement>(null)
   const selected = getFilter(selectedId)
+  const activeCategory = selected.category
 
-  useEffect(() => {
-    setActiveCategory(selected.category)
-  }, [selected.category])
-
-  const visible = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase()
-    let result = normalized ? filters : filtersByCategory(activeCategory)
-    if (normalized) {
-      result = result.filter((item) => [item.name, item.original, item.cantonese, item.group ?? '', item.summary.en, item.summary.yue, ...(item.keywords ?? [])].join(' ').toLocaleLowerCase().includes(normalized))
-    }
-    if (savedOnly) result = result.filter((item) => saved.has(item.id))
-    return result
-  }, [activeCategory, query, savedOnly, saved])
+  const normalized = query.trim().toLocaleLowerCase()
+  let visible = normalized ? filters : filtersByCategory(activeCategory)
+  if (normalized) {
+    visible = visible.filter((item) => [item.name, item.original, item.cantonese, item.group ?? '', item.summary.en, item.summary.yue, ...(item.keywords ?? [])].join(' ').toLocaleLowerCase().includes(normalized))
+  }
+  if (savedOnly) visible = visible.filter((item) => saved.has(item.id))
 
   useEffect(() => {
     if (visible.length > 0 && !visible.some((item) => item.id === selectedId)) onSelect(visible[0].id)
@@ -63,7 +56,6 @@ export function Explorer({ selectedId, onSelect, saved, onToggleSaved, learned, 
   }
 
   const chooseCategory = (id: CategoryId) => {
-    setActiveCategory(id)
     setQuery('')
     const next = filtersByCategory(id).find((item) => !savedOnly || saved.has(item.id))
     if (next) onSelect(next.id)
